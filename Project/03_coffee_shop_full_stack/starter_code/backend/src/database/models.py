@@ -2,8 +2,11 @@ import os
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
+from dotenv import load_dotenv
 
-database_filename = "database.db"
+load_dotenv()
+
+database_filename = os.getenv("DATABASE_FILENAME")
 project_dir = os.path.dirname(os.path.abspath(__file__))
 database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
 
@@ -58,13 +61,16 @@ class Drink(db.Model):
     # the required datatype is [{'color': string, 'name':string, 'parts':number}]
     recipe = Column(String(180), nullable=False)
 
+    def __init__(self, title, recipe):
+        self.title = title
+        self.recipe = recipe
     '''
     short()
         short form representation of the Drink model
     '''
 
     def short(self):
-        print(json.loads(self.recipe))
+        # print(json.loads(self.recipe))
         short_recipe = [{'color': r['color'], 'parts': r['parts']} for r in json.loads(self.recipe)]
         return {
             'id': self.id,
@@ -123,6 +129,12 @@ class Drink(db.Model):
 
     def update(self):
         db.session.commit()
+
+    
+    def serialize(self):
+        return {"id": self.id,
+                "title": self.title,
+                "recipe": json.loads(self.recipe)}
 
     def __repr__(self):
         return json.dumps(self.short())
