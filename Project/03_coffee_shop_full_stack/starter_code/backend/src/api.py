@@ -29,10 +29,10 @@ CORS(app)
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks', methods=['GET'])
-@requires_auth('get:drinks')
-def get_drinks(payload):
+# @requires_auth('get:drinks')
+def get_drinks():
     try: 
-        print(f'JWT: {payload}')
+        # print(f'JWT: {payload}')
         print(f'DRINKS: {Drink.query.order_by(Drink.id).all()}')
         drinks = [ drink.short() for drink in Drink.query.order_by(Drink.id).all() ]
         if len(drinks) == 0 or drinks == None:
